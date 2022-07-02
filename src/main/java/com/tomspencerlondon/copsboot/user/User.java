@@ -1,15 +1,14 @@
-package com.tomspencerlondon.copsboot;
+package com.tomspencerlondon.copsboot.user;
 
+import com.google.common.collect.Sets;
 import com.sun.istack.NotNull;
 import com.tomspencerlondon.orm.jpa.AbstractEntity;
 import java.util.Set;
-import java.util.UUID;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
@@ -31,6 +30,14 @@ public class User extends AbstractEntity<UserId> {
     this.email = email;
     this.password = password;
     this.roles = roles;
+  }
+
+  public static User createOfficer(UserId userId, String email, String encodedPassword) {
+    return new User(userId, email, encodedPassword, Sets.newHashSet(UserRole.OFFICER));
+  }
+
+  public static User createCaptain(UserId userId, String email, String encodedPassword) {
+    return new User(userId, email, encodedPassword, Sets.newHashSet(UserRole.CAPTAIN));
   }
 
   public String getEmail() {

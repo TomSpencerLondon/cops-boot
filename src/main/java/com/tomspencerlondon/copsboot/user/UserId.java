@@ -1,4 +1,4 @@
-package com.tomspencerlondon.copsboot;
+package com.tomspencerlondon.copsboot.user;
 
 import com.tomspencerlondon.orm.jpa.AbstractEntityId;
 import java.util.UUID;

@@ -1,10 +1,11 @@
-package com.tomspencerlondon.copsboot;
+package com.tomspencerlondon.copsboot.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.tomspencerlondon.orm.jpa.InMemoryUniqueIdGenerator;
 import com.tomspencerlondon.orm.jpa.UniqueIdGenerator;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,38 @@ public class UserRepositoryTest {
 
     assertThat(repository.count())
         .isEqualTo(1L);
+  }
+
+  @Test
+  void findByEmail() {
+    User user = Users.newRandomOfficer();
+    repository.save(user);
+    Optional<User> optional = repository.findByEmailIgnoreCase(user.getEmail());
+
+    assertThat(optional)
+        .isNotEmpty()
+        .contains(user);
+  }
+
+  @Test
+  void findByEmailIgnoringCase() {
+    User user = Users.newRandomOfficer();
+    repository.save(user);
+    Optional<User> optional = repository.findByEmailIgnoreCase(user.getEmail().toUpperCase());
+
+    assertThat(optional)
+        .isNotEmpty()
+        .contains(user);
+  }
+
+  @Test
+  void findByEmail_unknownEmail() {
+    User user = Users.newRandomOfficer();
+    repository.save(user);
+    Optional<User> optional = repository.findByEmailIgnoreCase("will.not@find.me");
+
+    assertThat(optional)
+        .isEmpty();
   }
 
   @TestConfiguration
