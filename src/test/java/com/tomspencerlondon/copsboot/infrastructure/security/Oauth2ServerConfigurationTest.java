@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.tomspencerlondon.copsboot.infrastructure.SpringProfiles;
 import com.tomspencerlondon.copsboot.user.UserService;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -32,10 +34,10 @@ public class Oauth2ServerConfigurationTest {
   void testGetAccessTokenAsOfficer() throws Exception {
     userService.createOfficer(Users.OFFICER_EMAIL, Users.OFFICER_PASSWORD);
 
-    String clientId = "copsboot-mobile-client";
-    String clientSecret = "ccUyb6vS4S8nxfbKPCrN";
+    String clientId = "test-client-id";
+    String clientSecret = "test-client-secret";
 
-    LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+    MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
     params.add("grant_type", "password");
     params.add("client_id", clientId);
@@ -47,6 +49,7 @@ public class Oauth2ServerConfigurationTest {
         .params(params)
         .with(httpBasic(clientId, clientSecret))
         .accept("application/json;charset=UTF-8"))
+        .andExpect(status().isOk())
         .andExpect(content().contentType("application/json;charset=UTF-8"))
         .andDo(print())
         .andExpect(jsonPath("access_token").isString())
