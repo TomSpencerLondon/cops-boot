@@ -6,15 +6,22 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.tomspencerlondon.copsboot.infrastructure.SpringProfiles;
 import com.tomspencerlondon.copsboot.user.UserRepository;
 import com.tomspencerlondon.copsboot.user.UserRepositoryTest;
 import com.tomspencerlondon.copsboot.user.Users;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.test.context.ActiveProfiles;
 
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles(SpringProfiles.TEST)
 public class ApplicationUserDetailsServiceTest {
 
   @Test

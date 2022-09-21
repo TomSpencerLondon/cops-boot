@@ -1,5 +1,6 @@
 package com.tomspencerlondon.copsboot.user;
 
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,5 +20,10 @@ public class UserServiceImpl implements UserService {
   public User createOfficer(String email, String password) {
     User user = User.createOfficer(repository.nextId(), email, passwordEncoder.encode(password));
     return repository.save(user);
+  }
+
+  @Override
+  public Optional<User> getUser(UserId userId) {
+    return Optional.empty();
   }
 }
