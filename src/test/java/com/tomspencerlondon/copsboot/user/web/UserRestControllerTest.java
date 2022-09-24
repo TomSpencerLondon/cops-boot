@@ -1,5 +1,9 @@
 package com.tomspencerlondon.copsboot.user.web;
 
+import static com.tomspencerlondon.copsboot.infrastructure.security.SecurityHelperForMockMvc.HEADER_AUTHORIZATION;
+import static com.tomspencerlondon.copsboot.infrastructure.security.SecurityHelperForMockMvc.bearer;
+import static com.tomspencerlondon.copsboot.infrastructure.security.SecurityHelperForMockMvc.obtainAccessToken;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -8,6 +12,8 @@ import com.tomspencerlondon.copsboot.infrastructure.security.OAuth2ServerConfigu
 import com.tomspencerlondon.copsboot.infrastructure.security.SecurityConfiguration;
 import com.tomspencerlondon.copsboot.infrastructure.security.StubUserDetailsService;
 import com.tomspencerlondon.copsboot.user.UserService;
+import com.tomspencerlondon.copsboot.user.Users;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -17,6 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
@@ -39,6 +46,17 @@ public class UserRestControllerTest {
         .andExpect(status().isUnauthorized());
   }
 
+  @Test
+  void givenAuthenticatedAsOfficer_whenAskingMyDetails_detailsReturned() throws Exception {
+    String accessToken = obtainAccessToken(mvc, Users.OFFICER_EMAIL, Users.OFFICER_PASSWORD);
+
+    when(service.getUser(Users.officer().getId()))
+        .thenReturn(Optional.of(Users.officer()));
+    mvc.perform(get("/api/users/me")
+        .header(HEADER_AUTHORIZATION, bearer(accessToken))
+    ).andExpect(status().isOk());
+  }
+
   @TestConfiguration
   @Import(OAuth2ServerConfiguration.class)
   static class TestConfig {
@@ -54,7 +72,7 @@ public class UserRestControllerTest {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-      return new BCryptPasswordEncoder();
+      return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
     @Bean
