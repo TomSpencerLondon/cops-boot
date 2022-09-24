@@ -5,6 +5,7 @@ import static com.tomspencerlondon.copsboot.infrastructure.security.SecurityHelp
 import static com.tomspencerlondon.copsboot.infrastructure.security.SecurityHelperForMockMvc.obtainAccessToken;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.tomspencerlondon.copsboot.infrastructure.SpringProfiles;
@@ -54,7 +55,11 @@ public class UserRestControllerTest {
         .thenReturn(Optional.of(Users.officer()));
     mvc.perform(get("/api/users/me")
         .header(HEADER_AUTHORIZATION, bearer(accessToken))
-    ).andExpect(status().isOk());
+    ).andExpect(status().isOk())
+        .andExpect(jsonPath("id").exists())
+        .andExpect(jsonPath("email").value(Users.OFFICER_EMAIL))
+        .andExpect(jsonPath("roles").isArray())
+        .andExpect(jsonPath("roles[0]").value("OFFICER"));
   }
 
   @TestConfiguration
