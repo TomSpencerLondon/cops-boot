@@ -48,4 +48,7 @@ public class Users {
 
   private Users() {
   }
+  public static User newOfficer(String email, String password) {
+    return User.createOfficer(newRandomId(), email, PASSWORD_ENCODER.encode(password));
+  }
 }
