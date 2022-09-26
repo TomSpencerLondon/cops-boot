@@ -21,6 +21,7 @@
     <asciidoctor-maven-plugin.version>1.5.6</asciidoctor-maven-plugin.version>
     <guava.version>25.1-jre</guava.version>
     <spring-restdocs.version>2.0.3.RELEASE</spring-restdocs.version>
+    <snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
   </properties>
   <dependencies>
     <dependency>
@@ -149,6 +150,7 @@
           <backend>html</backend>
           <doctype>book</doctype>
           <attributes>
+            <snippets>${snippetsDirectory}</snippets>
             <project-version>${project.version}</project-version>
           </attributes>
         </configuration>
