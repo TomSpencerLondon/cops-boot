@@ -20,6 +20,7 @@ import com.tomspencerlondon.copsboot.infrastructure.SpringProfiles;
 import com.tomspencerlondon.copsboot.infrastructure.security.OAuth2ServerConfiguration;
 import com.tomspencerlondon.copsboot.infrastructure.security.SecurityConfiguration;
 import com.tomspencerlondon.copsboot.infrastructure.security.StubUserDetailsService;
+import com.tomspencerlondon.copsboot.infrastructure.test.CopsbootControllerTest;
 import com.tomspencerlondon.copsboot.user.UserService;
 import com.tomspencerlondon.copsboot.user.Users;
 import java.util.Optional;
@@ -50,15 +51,11 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 
-@WebMvcTest(UserRestController.class)
-@ActiveProfiles(SpringProfiles.TEST)
 @ExtendWith({RestDocumentationExtension.class, SpringExtension.class})
+@CopsbootControllerTest(UserRestController.class)
 public class UserRestControllerDocumentation {
 
   private MockMvc mvc;
-
-  @Autowired
-  private ObjectMapper objectMapper;
 
   @MockBean
   private UserService service;
@@ -94,30 +91,4 @@ public class UserRestControllerDocumentation {
             .description("The email address of the user.").optional(),
             fieldWithPath("roles").description("The security roles of the user.").optional())));
   }
-
-  @TestConfiguration
-  @Import(OAuth2ServerConfiguration.class)
-  static class TestConfig {
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-      return new StubUserDetailsService();
-    }
-
-    @Bean
-    public TokenStore tokenStore() {
-      return new InMemoryTokenStore();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-      return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-
-    @Bean
-    public SecurityConfiguration securityConfiguration() {
-      return new SecurityConfiguration();
-    }
-  }
-
 }
