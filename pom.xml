@@ -22,6 +22,7 @@
     <guava.version>25.1-jre</guava.version>
     <spring-restdocs.version>2.0.3.RELEASE</spring-restdocs.version>
     <snippetsDirectory>${project.build.directory}/generated-snippets</snippetsDirectory>
+    <testcontainers.version>1.17.5</testcontainers.version>
   </properties>
   <dependencies>
     <dependency>
@@ -93,6 +94,27 @@
       <groupId>org.springframework.restdocs</groupId>
       <artifactId>spring-restdocs-mockmvc</artifactId>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>testcontainers</artifactId>
+      <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testcontainers</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${testcontainers.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.flywaydb</groupId>
+      <artifactId>flyway-core</artifactId>
     </dependency>
   </dependencies>
 

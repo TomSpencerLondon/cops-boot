@@ -19,10 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles(SpringProfiles.TEST)
-public class ApplicationUserDetailsServiceTest {
+class ApplicationUserDetailsServiceTest {
 
   @Test
   void givenExistingUsername_whenLoadingUser_userIsReturned() {

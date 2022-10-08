@@ -15,6 +15,4 @@ import org.springframework.test.context.ContextConfiguration;
 public @interface CopsbootControllerTest {
 
   @AliasFor(annotation = WebMvcTest.class, attribute = "value") Class<?>[] value() default {};
-
-  @AliasFor(annotation = WebMvcTest.class, attribute = "controllers") Class<?>[] controllers() default {};
 }
