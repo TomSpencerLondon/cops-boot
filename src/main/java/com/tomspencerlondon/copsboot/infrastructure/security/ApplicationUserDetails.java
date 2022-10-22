@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-public class ApplicationUserDetails extends org.springframework.security.core.userdetails.User { //<1>
+public class ApplicationUserDetails extends org.springframework.security.core.userdetails.User {
 
   private static final String ROLE_PREFIX = "ROLE_";
 
