@@ -23,7 +23,7 @@ public class ReportRestController {
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public ReportDto createReport(@AuthenticationPrincipal ApplicationUserDetails userDetails,
-      @Valid @RequestBody CreateReportParameters parameters) {
+      @Valid CreateReportParameters parameters) {
     return ReportDto.fromReport(service.createReport(userDetails.getUserId(),
         parameters.getDateTime(),
         parameters.getDescription()));

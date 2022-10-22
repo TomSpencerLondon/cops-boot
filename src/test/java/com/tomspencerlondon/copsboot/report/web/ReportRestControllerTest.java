@@ -6,6 +6,7 @@ import static com.tomspencerlondon.copsboot.infrastructure.security.SecurityHelp
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -40,19 +42,25 @@ class ReportRestControllerTest {
     String accessToken = obtainAccessToken(mvc, Users.OFFICER_EMAIL, Users.OFFICER_PASSWORD);
     ZonedDateTime dateTime = ZonedDateTime.parse("2018-04-11T22:59:03.189+02:00");
     String description = "The suspect is wearing a black hat.";
+    MockMultipartFile image = createMockImage();
     CreateReportParameters parameters = new CreateReportParameters(dateTime,
-        description);
+        description, image);
     when(service.createReport(eq(Users.officer().getId()), any(ZonedDateTime.class), eq(description)))
         .thenReturn(new Report(new ReportId(UUID.randomUUID()), Users.officer(), dateTime, description));
 
-    mvc.perform(post("/api/reports")
+    mvc.perform(fileUpload("/api/reports")
+            .file(image)
             .header(HEADER_AUTHORIZATION, bearer(accessToken))
-            .contentType(MediaType.APPLICATION_JSON_UTF8)
-            .content(objectMapper.writeValueAsString(parameters)))
+            .param("dateTime", String.valueOf(dateTime))
+            .param("description", description))
         .andExpect(status().isCreated())
         .andExpect(jsonPath("id").exists())
         .andExpect(jsonPath("reporter").value(Users.OFFICER_EMAIL))
         .andExpect(jsonPath("dateTime").value("2018-04-11T22:59:03.189+02:00"))
         .andExpect(jsonPath("description").value(description));
+  }
+
+  private MockMultipartFile createMockImage() {
+    return new MockMultipartFile("image", "picture.png", "image/png", new byte[]{1, 2, 3});
   }
 }
