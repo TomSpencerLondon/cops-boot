@@ -3,13 +3,16 @@ package com.tomspencerlondon.copsboot.user.web;
 import static com.tomspencerlondon.copsboot.infrastructure.security.SecurityHelperForMockMvc.HEADER_AUTHORIZATION;
 import static com.tomspencerlondon.copsboot.infrastructure.security.SecurityHelperForMockMvc.bearer;
 import static com.tomspencerlondon.copsboot.infrastructure.security.SecurityHelperForMockMvc.obtainAccessToken;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tomspencerlondon.copsboot.infrastructure.SpringProfiles;
 import com.tomspencerlondon.copsboot.infrastructure.test.CopsbootControllerTest;
@@ -81,5 +84,23 @@ public class UserRestControllerTest {
         .andExpect(jsonPath("roles[0]").value("OFFICER"));
 
     verify(service).createOfficer(email, password);
+  }
+
+  @Test
+  void testCreateOfficerIfPasswordIsTooShort() throws Exception {
+    String email = "wim.deblauwe@example.com";
+    String password = "pwd";
+
+    CreateOfficerParameters parameters = new CreateOfficerParameters();
+    parameters.setEmail(email);
+    parameters.setPassword(password);
+
+    mvc.perform(post("/api/users")
+        .contentType(MediaType.APPLICATION_JSON_UTF8)
+        .content(objectMapper.writeValueAsString(parameters))
+    ).andExpect(status().isBadRequest())
+        .andExpect(jsonPath("errors[0].fieldName").value("password"));
+
+    verify(service, never()).createOfficer(email, password);
   }
 }
