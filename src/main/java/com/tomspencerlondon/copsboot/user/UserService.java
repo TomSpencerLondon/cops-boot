@@ -7,4 +7,6 @@ public interface UserService {
 
   Optional<User> getUser(UserId userId);
 
+  Optional<User> findUserByEmail(String email);
+
 }

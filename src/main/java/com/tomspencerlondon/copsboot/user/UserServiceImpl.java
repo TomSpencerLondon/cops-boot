@@ -26,4 +26,9 @@ public class UserServiceImpl implements UserService {
   public Optional<User> getUser(UserId userId) {
     return Optional.empty();
   }
+
+  @Override
+  public Optional<User> findUserByEmail(String email) {
+    return repository.findByEmailIgnoreCase(email);
+  }
 }

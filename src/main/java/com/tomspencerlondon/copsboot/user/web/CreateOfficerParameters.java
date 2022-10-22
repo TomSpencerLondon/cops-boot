@@ -6,6 +6,7 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 
 @Data
+@ValidCreateUserParameters
 public class CreateOfficerParameters {
   @NotNull
   @Email
