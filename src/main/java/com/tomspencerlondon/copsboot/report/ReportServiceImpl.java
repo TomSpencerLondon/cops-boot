@@ -4,6 +4,7 @@ import com.tomspencerlondon.copsboot.user.UserId;
 import com.tomspencerlondon.copsboot.user.UserService;
 import com.tomspencerlondon.copsboot.user.web.UserNotFoundException;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -25,5 +26,10 @@ public class ReportServiceImpl implements ReportService {
             .orElseThrow(() -> new UserNotFoundException(reporterId)),
         dateTime,
         description));
+  }
+
+  @Override
+  public Optional<Report> findReportById(ReportId reportId) {
+    return repository.findById(reportId);
   }
 }
