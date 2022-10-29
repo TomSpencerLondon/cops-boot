@@ -72,12 +72,11 @@ class ReportRestControllerTest {
         .thenReturn(Optional.of(new Report(new ReportId(uuid), Users.officer(),
             ZonedDateTime.parse("2018-04-11T22:59:03.189+02:00"), description)));
 
-    String reporterId = Users.officer().getId().asString();
     mvc.perform(get(String.format("/api/reports/%s", uuid))
             .header(HEADER_AUTHORIZATION, "Bearer " + accessToken))
         .andExpect(status().isOk())
         .andExpect(jsonPath("id").exists())
-        .andExpect(jsonPath("reporter").value(reporterId))
+        .andExpect(jsonPath("reporter").value(Users.OFFICER_EMAIL))
         .andExpect(jsonPath("dateTime").value("2018-04-11T22:59:03.189+02:00"))
         .andExpect(jsonPath("description").value(description));
   }

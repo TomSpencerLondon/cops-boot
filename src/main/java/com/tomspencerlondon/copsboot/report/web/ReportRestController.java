@@ -1,6 +1,7 @@
 package com.tomspencerlondon.copsboot.report.web;
 
 import com.tomspencerlondon.copsboot.infrastructure.security.ApplicationUserDetails;
+import com.tomspencerlondon.copsboot.report.Report;
 import com.tomspencerlondon.copsboot.report.ReportId;
 import com.tomspencerlondon.copsboot.report.ReportService;
 import java.util.UUID;
@@ -35,10 +36,7 @@ public class ReportRestController {
   @GetMapping("/{reportId}")
   public ReportDto reportById(@PathVariable String reportId) {
     return service.findReportById(new ReportId(UUID.fromString(reportId)))
-        .map(r -> {
-          String id = r.getReporter().getId().getId().toString();
-          return new ReportDto(r.getId(), id, r.getDateTime(), r.getDescription());
-        }).orElse(null);
+        .map(ReportDto::fromReport).orElse(null);
   }
 
 
