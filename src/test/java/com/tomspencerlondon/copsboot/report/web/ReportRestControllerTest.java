@@ -44,8 +44,6 @@ class ReportRestControllerTest {
     ZonedDateTime dateTime = ZonedDateTime.parse("2018-04-11T22:59:03.189+02:00");
     String description = "The suspect is wearing a black hat.";
     MockMultipartFile image = createMockImage();
-    CreateReportParameters parameters = new CreateReportParameters(dateTime,
-        description, image);
     when(service.createReport(eq(Users.officer().getId()), any(ZonedDateTime.class), eq(description)))
         .thenReturn(new Report(new ReportId(UUID.randomUUID()), Users.officer(), dateTime, description));
 
