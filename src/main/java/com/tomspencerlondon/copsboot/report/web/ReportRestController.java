@@ -28,4 +28,9 @@ public class ReportRestController {
         parameters.getDateTime(),
         parameters.getDescription()));
   }
+
+//  Add two endpoints:
+//  1. Get request /api/reports/id [path variable]
+//  2. Get request /api/reports/id/image [path variable] - image from database and return way for http
+//  stack overflow return image from controller
 }

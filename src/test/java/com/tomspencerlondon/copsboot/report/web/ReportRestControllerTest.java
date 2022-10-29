@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -57,7 +58,8 @@ class ReportRestControllerTest {
         .andExpect(jsonPath("id").exists())
         .andExpect(jsonPath("reporter").value(Users.OFFICER_EMAIL))
         .andExpect(jsonPath("dateTime").value("2018-04-11T22:59:03.189+02:00"))
-        .andExpect(jsonPath("description").value(description));
+        .andExpect(jsonPath("description").value(description))
+        .andDo(print());
   }
 
   private MockMultipartFile createMockImage() {
