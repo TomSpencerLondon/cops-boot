@@ -13,13 +13,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.jayway.jsonpath.JsonPath;
 import com.tomspencerlondon.copsboot.infrastructure.test.CopsbootControllerTest;
 import com.tomspencerlondon.copsboot.report.Report;
 import com.tomspencerlondon.copsboot.report.ReportId;
 import com.tomspencerlondon.copsboot.report.ReportService;
-import com.tomspencerlondon.copsboot.user.User;
-import com.tomspencerlondon.copsboot.user.UserId;
 import com.tomspencerlondon.copsboot.user.Users;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -28,11 +25,9 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 
 @CopsbootControllerTest(ReportRestController.class)
@@ -52,15 +47,17 @@ class ReportRestControllerTest {
     ZonedDateTime dateTime = ZonedDateTime.parse("2018-04-11T22:59:03.189+02:00");
     String description = "The suspect is wearing a black hat.";
     MockMultipartFile image = createMockImage();
-    when(service.createReport(eq(Users.officer().getId()), any(ZonedDateTime.class), eq(description)))
-        .thenReturn(new Report(new ReportId(UUID.randomUUID()), Users.officer(), dateTime, description));
+    byte[] bytes = image.getBytes();
+    when(service.createReport(eq(Users.officer().getId()), any(ZonedDateTime.class), eq(description), any(byte[].class)))
+        .thenReturn(new Report(new ReportId(UUID.randomUUID()), Users.officer(), dateTime, description, bytes));
 
     postReport(accessToken, dateTime, description, image)
         .andExpect(status().isCreated())
         .andExpect(jsonPath("id").exists())
         .andExpect(jsonPath("reporter").value(Users.OFFICER_EMAIL))
         .andExpect(jsonPath("dateTime").value("2018-04-11T22:59:03.189+02:00"))
-        .andExpect(jsonPath("description").value(description));
+        .andExpect(jsonPath("description").value(description))
+        .andDo(print());
   }
 
   @Test
@@ -68,9 +65,12 @@ class ReportRestControllerTest {
     String accessToken = obtainAccessToken(mvc, Users.OFFICER_EMAIL, Users.OFFICER_PASSWORD);
     UUID uuid = UUID.randomUUID();
     String description = "suspect 1";
+    MockMultipartFile image = createMockImage();
+    byte[] bytes = image.getBytes();
+
     when(service.findReportById(new ReportId(uuid)))
         .thenReturn(Optional.of(new Report(new ReportId(uuid), Users.officer(),
-            ZonedDateTime.parse("2018-04-11T22:59:03.189+02:00"), description)));
+            ZonedDateTime.parse("2018-04-11T22:59:03.189+02:00"), description, bytes)));
 
     mvc.perform(get(String.format("/api/reports/%s", uuid))
             .header(HEADER_AUTHORIZATION, "Bearer " + accessToken))
@@ -81,6 +81,24 @@ class ReportRestControllerTest {
         .andExpect(jsonPath("description").value(description));
   }
 
+  @Test
+  void officerIsAbleToGetAReportImage() throws Exception {
+    String accessToken = obtainAccessToken(mvc, Users.OFFICER_EMAIL, Users.OFFICER_PASSWORD);
+    UUID uuid = UUID.randomUUID();
+    String description = "suspect 1";
+    MockMultipartFile image = createMockImage();
+    byte[] bytes = image.getBytes();
+
+    when(service.findReportById(new ReportId(uuid)))
+        .thenReturn(Optional.of(new Report(new ReportId(uuid), Users.officer(),
+            ZonedDateTime.parse("2018-04-11T22:59:03.189+02:00"), description, bytes)));
+
+    mvc.perform(get(String.format("/api/reports/%s/image", uuid))
+            .header(HEADER_AUTHORIZATION, "Bearer " + accessToken))
+        .andExpect(status().isOk())
+        .andDo(print());
+
+  }
 
   @NotNull
   private ResultActions postReport(String accessToken, ZonedDateTime dateTime, String description, MockMultipartFile image) throws Exception {

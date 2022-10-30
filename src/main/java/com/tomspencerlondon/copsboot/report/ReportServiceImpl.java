@@ -20,12 +20,13 @@ public class ReportServiceImpl implements ReportService {
   }
 
   @Override
-  public Report createReport(UserId reporterId, ZonedDateTime dateTime, String description) {
+  public Report createReport(UserId reporterId, ZonedDateTime dateTime, String description, byte[] bytes) {
     return repository.save(new Report(repository.nextId(),
         userService.getUser(reporterId)
             .orElseThrow(() -> new UserNotFoundException(reporterId)),
         dateTime,
-        description));
+        description,
+        bytes));
   }
 
   @Override

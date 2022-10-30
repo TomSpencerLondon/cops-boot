@@ -52,9 +52,12 @@ Content-Type: image/png
 
 ###
 
-GET http://localhost:8080/api/reports/UUID
+GET http://localhost:8080/api/reports/d03f77cf-03bd-4dec-a335-32adff822634
 Authorization: Bearer {{access_token}}
 
+###
+GET http://localhost:8080/api/reports/c15459d6-4e3a-4535-92f9-9cd97c03ccad/image
+Authorization: Bearer {{access_token}}
 
 
 ### Meta data and file separate in controller

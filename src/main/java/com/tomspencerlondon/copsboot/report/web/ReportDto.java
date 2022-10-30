@@ -16,6 +16,7 @@ public class ReportDto {
     return new ReportDto(report.getId(),
         report.getReporter().getEmail(),
         report.getDateTime(),
-        report.getDescription());
+        report.getDescription()
+    );
   }
 }
