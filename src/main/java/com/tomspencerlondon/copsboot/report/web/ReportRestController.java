@@ -3,6 +3,7 @@ package com.tomspencerlondon.copsboot.report.web;
 import com.tomspencerlondon.copsboot.infrastructure.security.ApplicationUserDetails;
 import com.tomspencerlondon.copsboot.report.Report;
 import com.tomspencerlondon.copsboot.report.ReportId;
+import com.tomspencerlondon.copsboot.report.ReportNotFoundException;
 import com.tomspencerlondon.copsboot.report.ReportService;
 import java.io.IOException;
 import java.util.UUID;
@@ -39,15 +40,17 @@ public class ReportRestController {
   }
 
   @GetMapping("/{reportId}")
-  public ReportDto reportById(@PathVariable String reportId) {
-    return service.findReportById(new ReportId(UUID.fromString(reportId)))
-        .map(ReportDto::fromReport).orElse(null);
+  public ReportDto reportById(@PathVariable UUID reportId) {
+    ReportId id = new ReportId(reportId);
+    return service.findReportById(id)
+        .map(ReportDto::fromReport).orElseThrow(() -> new ReportNotFoundException(id));
   }
 
   @GetMapping("/{reportId}/image")
-  public ResponseEntity<?> getImageByName(@PathVariable String reportId){
-    byte[] image = service.findReportById(new ReportId(UUID.fromString(reportId)))
-        .map(Report::getImage).orElse(null);
+  public ResponseEntity<?> getImageByName(@PathVariable UUID reportId){
+    ReportId id = new ReportId(reportId);
+    byte[] image = service.findReportById(id)
+        .map(Report::getImage).orElseThrow(() -> new ReportNotFoundException(id));
 
     return ResponseEntity.status(HttpStatus.OK)
         .contentType(MediaType.valueOf("image/png"))

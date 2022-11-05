@@ -82,6 +82,33 @@ class ReportRestControllerTest {
   }
 
   @Test
+  void whenOfficerCantFindAReportShouldReturn404() throws Exception {
+    String accessToken = obtainAccessToken(mvc, Users.OFFICER_EMAIL, Users.OFFICER_PASSWORD);
+    UUID uuid = UUID.randomUUID();
+
+    when(service.findReportById(new ReportId(uuid)))
+        .thenReturn(Optional.empty());
+
+    mvc.perform(get(String.format("/api/reports/%s", uuid))
+            .header(HEADER_AUTHORIZATION, "Bearer " + accessToken))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void whenOfficerCantFindImageShouldReturn404() throws Exception {
+    String accessToken = obtainAccessToken(mvc, Users.OFFICER_EMAIL, Users.OFFICER_PASSWORD);
+    UUID uuid = UUID.randomUUID();
+
+    when(service.findReportById(new ReportId(uuid)))
+        .thenReturn(Optional.empty());
+
+    mvc.perform(get(String.format("/api/reports/%s/image", uuid))
+            .header(HEADER_AUTHORIZATION, "Bearer " + accessToken))
+        .andExpect(status().isNotFound());
+  }
+
+
+  @Test
   void officerIsAbleToGetAReportImage() throws Exception {
     String accessToken = obtainAccessToken(mvc, Users.OFFICER_EMAIL, Users.OFFICER_PASSWORD);
     UUID uuid = UUID.randomUUID();
